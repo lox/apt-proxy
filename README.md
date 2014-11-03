@@ -15,7 +15,7 @@ $GOBIN/apt-proxy
 
 ```bash
 docker build --rm --tag=apt-proxy-dev .
-docker run -it --rm --publish=3142 apt-proxy-dev
+docker run -it --rm --publish=3142 --net host apt-proxy-dev
 ```
 
 ## Building in Docker for Release
@@ -31,5 +31,5 @@ rm last-cid
 ## Running from Docker
 
 ```
-docker run -it --rm --publish=3142 lox24/apt-proxy
+docker run -it --rm --publish=3142 --net host lox24/apt-proxy
 ```

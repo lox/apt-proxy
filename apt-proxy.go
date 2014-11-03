@@ -51,7 +51,7 @@ func main() {
 	ap := proxy.NewAptProxy()
 	ap.CachePatterns = cachePatterns
 
-	log.Printf("proxy listening on https://%s", listen)
+	log.Printf("proxy listening on %s", listen)
 	log.Fatal(http.ListenAndServe(listen, &httpcache.Logger{
 		Handler: httpcache.NewHandler(cache, ap.Handler()),
 	}))
