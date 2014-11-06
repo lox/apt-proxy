@@ -8,6 +8,7 @@ import (
 
 	"github.com/lox/apt-proxy/proxy"
 	"github.com/lox/httpcache"
+	"github.com/lox/httpcache/httplog"
 )
 
 const (
@@ -52,7 +53,7 @@ func main() {
 	ap.CachePatterns = cachePatterns
 
 	log.Printf("proxy listening on %s", listen)
-	log.Fatal(http.ListenAndServe(listen, &httpcache.Logger{
-		Handler: httpcache.NewHandler(cache, ap.Handler()),
-	}))
+	log.Fatal(http.ListenAndServe(listen, httplog.NewResponseLogger(
+		httpcache.NewHandler(cache, ap.Handler()),
+	)))
 }
