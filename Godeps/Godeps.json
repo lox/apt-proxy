@@ -1,0 +1,14 @@
+{
+	"ImportPath": "github.com/lox/apt-proxy",
+	"GoVersion": "go1.3.3",
+	"Deps": [
+		{
+			"ImportPath": "github.com/lox/httpcache",
+			"Rev": "58ab1f2261278e1f20fa363af7a01392bbe6274e"
+		},
+		{
+			"ImportPath": "gopkgs.com/vfs.v1",
+			"Rev": "60e0a240148f4dce1a8a1f5639b0e0c9e25fd288"
+		}
+	]
+}
