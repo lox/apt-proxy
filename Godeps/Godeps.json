@@ -4,7 +4,7 @@
 	"Deps": [
 		{
 			"ImportPath": "github.com/lox/httpcache",
-			"Rev": "58ab1f2261278e1f20fa363af7a01392bbe6274e"
+			"Rev": "6a9f0d42fe2cb0308ff6656d4860eb5cf3173b74"
 		},
 		{
 			"ImportPath": "gopkgs.com/vfs.v1",

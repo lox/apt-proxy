@@ -4,7 +4,6 @@ import (
 	"flag"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/lox/apt-proxy/proxy"
 	"github.com/lox/httpcache"
@@ -16,44 +15,41 @@ const (
 	defaultDir    = "./.aptcache"
 )
 
-var cachePatterns = proxy.CachePatternSlice{
-	proxy.NewCachePattern(`deb$`, time.Hour*24*7),
-	proxy.NewCachePattern(`udeb$`, time.Hour*24*7),
-	proxy.NewCachePattern(`DiffIndex$`, time.Hour),
-	proxy.NewCachePattern(`PackagesIndex$`, time.Hour),
-	proxy.NewCachePattern(`Packages\.(bz2|gz|lzma)$`, time.Hour),
-	proxy.NewCachePattern(`SourcesIndex$`, time.Hour),
-	proxy.NewCachePattern(`Sources\.(bz2|gz|lzma)$`, time.Hour),
-	proxy.NewCachePattern(`Release(\.gpg)?$`, time.Hour),
-	proxy.NewCachePattern(`Translation-(en|fr)\.(gz|bz2|bzip2|lzma)$`, time.Hour),
-	proxy.NewCachePattern(`Sources\.lzma$`, time.Hour),
-}
-
 var (
 	version string
 	listen  string
 	dir     string
+	debug   bool
 )
 
 func init() {
 	flag.StringVar(&listen, "listen", defaultListen, "the host and port to bind to")
 	flag.StringVar(&dir, "cachedir", defaultDir, "the dir to store cache data in")
+	flag.BoolVar(&debug, "debug", false, "whether to output debugging logging")
 	flag.Parse()
 }
 
 func main() {
 	log.Printf("running apt-proxy %s", version)
 
+	if debug {
+		httpcache.DebugLogging = true
+	}
+
 	cache, err := httpcache.NewDiskCache(dir)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	ap := proxy.NewAptProxy()
-	ap.CachePatterns = cachePatterns
+	ap := proxy.NewAptProxyFromDefaults()
+	ap.Handler = httpcache.NewHandler(cache, ap.Handler)
+
+	logger := httplog.NewResponseLogger(ap.Handler)
+	logger.DumpRequests = debug
+	logger.DumpResponses = debug
+	logger.DumpErrors = debug
+	ap.Handler = logger
 
 	log.Printf("proxy listening on %s", listen)
-	log.Fatal(http.ListenAndServe(listen, httplog.NewResponseLogger(
-		httpcache.NewHandler(cache, ap.Handler()),
-	)))
+	log.Fatal(http.ListenAndServe(listen, ap))
 }

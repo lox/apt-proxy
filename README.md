@@ -33,3 +33,10 @@ rm last-cid
 ```
 docker run -it --rm --publish=3142 --net host lox24/apt-proxy
 ```
+
+## Debugging
+
+```
+http_proxy=http://192.168.33.1:3142 apt-get -o Debug::pkgProblemResolver=true -o Debug::Acquire::http=true update
+http_proxy=http://192.168.33.1:3142 apt-get -o Debug::pkgProblemResolver=true -o Debug::Acquire::http=true install apache2
+```
